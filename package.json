@@ -12,5 +12,10 @@
   },
   "author": "",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/lacolonia/image-fx-02#readme"
+  "homepage": "https://bitbucket.org/lacolonia/image-fx-02#readme",
+  "dependencies": {
+    "next": "^8.1.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
 }
