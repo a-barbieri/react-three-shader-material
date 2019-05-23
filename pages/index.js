@@ -1,7 +1,12 @@
-import {Hello} from "../components/Hello";
+import React from 'react'
+import {Scene} from "../components/Scene";
 
 function Home() {
-   return <Hello />
+   return (
+      <div>
+         <Scene />
+      </div>
+   )
 }
 
 export default Home;
