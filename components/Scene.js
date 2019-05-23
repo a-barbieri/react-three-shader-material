@@ -9,7 +9,7 @@ export class Scene extends Component {
 
    componentDidMount() {
       this.scene = new THREE.Scene();
-      this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+      this.camera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, -window.innerHeight, window.innerHeight, 1, 2000)
       this.camera.position.y = 400;
 
       this.renderer = new THREE.WebGLRenderer();
