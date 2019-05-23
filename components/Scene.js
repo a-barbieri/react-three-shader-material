@@ -2,28 +2,54 @@ import React, {Component} from 'react'
 import * as THREE from 'three'
 
 export class Scene extends Component {
-
-   constructor(state, props) {
+   constructor(state) {
       super(state);
-
+      this.animate = this.animate.bind(this)
    }
 
    componentDidMount() {
-      var scene = new THREE.Scene();
-      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+      this.camera.position.y = 400;
 
-      var renderer = new THREE.WebGLRenderer();
-      renderer.setSize( window.innerWidth, window.innerHeight);
-      renderer.domElement.id = "scene";
+      this.renderer = new THREE.WebGLRenderer();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.renderer.setPixelRatio(1);
+      this.renderer.domElement.id = "scene_test";
 
-      if (!document.getElementById('scene')) {
-         document.body.appendChild( renderer.domElement );
+      this.initialize();
+
+      if (!document.getElementById('scene_test')) {
+         document.body.appendChild( this.renderer.domElement );
       }
+   }
+
+   initialize() {
+
+      let ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
+      this.scene.add( ambientLight );
+
+      let material = new THREE.MeshNormalMaterial();
+      let object = new THREE.Mesh( new THREE.SphereBufferGeometry( 75, 20, 10 ), material );
+      //object.position.set( - 300, 0, 200 );
+      this.scene.add( object );
+
+      this.animate();
+   }
+
+   animate() {
+      requestAnimationFrame( this.animate );
+      this.renderScene();
+   }
+
+   renderScene() {
+      this.camera.lookAt( this.scene.position );
+      this.renderer.render( this.scene, this.camera );
    }
 
    render() {
       return (
-         <h1>THREE</h1>
+         <div></div>
       )
    }
 }
