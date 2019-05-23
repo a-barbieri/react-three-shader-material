@@ -7,18 +7,33 @@ import {fragment} from './shaders/background.frag.js'
 export class Scene extends Component {
    constructor(state) {
       super(state);
-      this.animate = this.animate.bind(this)
+      this.animate = this.animate.bind(this);
+      this.far = 1000;
    }
 
    componentDidMount() {
       this.scene = new THREE.Scene();
-      this.camera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, -window.innerHeight, window.innerHeight, 1, 2000)
-      this.camera.position.y = 400;
+      this.camera = new THREE.OrthographicCamera(
+         -window.innerWidth / 2,
+         window.innerWidth / 2,
+         -window.innerHeight / 2,
+         window.innerHeight / 2,
+         1,
+         this.far)
+      this.camera.position.z = this.far - 1;
+
+
+      // Perspective camera, use to debug
+      // this.camera = new THREE.PerspectiveCamera();
+      // this.camera.position.z = 40;
+      // this.camera.position.x = this.far/2 - 1;
+      // //this.camera.position.y = 40;
+      // this.camera.lookAt(this.scene)
 
       this.renderer = new THREE.WebGLRenderer({ alpha: true });
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.renderer.setPixelRatio(1);
-      this.renderer.setClearColor( 0x000000, 0 );
+      //this.renderer.setClearColor( 0x000000, 0 );
       this.renderer.domElement.id = "scene_test";
 
       this.initialize();
@@ -45,7 +60,8 @@ export class Scene extends Component {
 
       // Create Sphere
       let material = new THREE.MeshNormalMaterial();
-      this.sphere = new THREE.Mesh( new THREE.SphereBufferGeometry( 75, 20, 10 ), material );
+      this.sphere = new THREE.Mesh( new THREE.SphereBufferGeometry( 20, 20, 10 ), material );
+      this.sphere.position.z = 20;
       this.scene.add( this.sphere );
 
       // Launch animation process
@@ -59,8 +75,9 @@ export class Scene extends Component {
 
       // Update sphere position
       let angle = this.clock.elapsedTime() * 0.001;
-      this.sphere.position.x = 500 * Math.sin(angle);
-      this.sphere.position.z = 500 * Math.cos(angle);
+      this.sphere.position.x = 40 * Math.sin(angle);
+      this.sphere.position.y = 40 * Math.cos(angle);
+
 
       // Bind function to next frame
       requestAnimationFrame( this.animate );
@@ -83,16 +100,21 @@ export class Scene extends Component {
       // create a background
       const backgroundPlane = new THREE.PlaneBufferGeometry(
          window.innerWidth,
-         window.innerHeight
+         window.innerHeight,
+         32
       );
 
       let backgroundMaterial = new THREE.ShaderMaterial({
-         uniforms: {
-            colorB: {type: 'vec3', value: new THREE.Color(0xACB6E5)},
-            colorA: {type: 'vec3', value: new THREE.Color(0x74ebd5)}
-         },
+         // uniforms: {
+         //    u_resolution: {
+         //       type: 'vec2',
+         //       value: new THREE.Uniform(new THREE.Vector2(100, 200))
+         //    },
+         //    u_time: {type: 'float', value: 0.0 }
+         // },
          vertexShader: vertex,
-         fragmentShader: fragment
+         fragmentShader: fragment,
+         side: THREE.DoubleSide
       });
 
       // Create mesh
