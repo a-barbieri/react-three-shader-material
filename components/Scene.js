@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import * as THREE from 'three'
+import {Clock} from './Clock'
 
 export class Scene extends Component {
    constructor(state) {
@@ -30,14 +31,21 @@ export class Scene extends Component {
       this.scene.add( ambientLight );
 
       let material = new THREE.MeshNormalMaterial();
-      let object = new THREE.Mesh( new THREE.SphereBufferGeometry( 75, 20, 10 ), material );
+      this.sphere = new THREE.Mesh( new THREE.SphereBufferGeometry( 75, 20, 10 ), material );
       //object.position.set( - 300, 0, 200 );
-      this.scene.add( object );
+      this.scene.add( this.sphere );
+
+      this.clock = new Clock();
 
       this.animate();
    }
 
    animate() {
+
+      let angle = this.clock.elapsedTime() * 0.001;
+      this.sphere.position.x = 500 * Math.sin(angle);
+      this.sphere.position.z = 500 * Math.cos(angle);
+
       requestAnimationFrame( this.animate );
       this.renderScene();
    }
