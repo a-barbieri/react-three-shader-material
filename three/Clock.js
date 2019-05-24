@@ -9,6 +9,6 @@ export class Clock {
    }
 
    elapsedTime() {
-      return this.startTime - Date.now();
+      return Date.now() - this.startTime;
    }
 }

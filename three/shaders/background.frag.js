@@ -4,11 +4,12 @@ export const fragment = `
   varying highp vec2 vUv;
   
   uniform sampler2D u_texture;
-
-  void main() {
+  uniform float u_current_time;
   
+  void main() {
     vec4 color = texture2D(u_texture, vUv);
-
-    gl_FragColor = vec4(color);
+    float test = u_current_time;
+    // float test = sin(u_current_time)*0.5 + 0.5;
+    gl_FragColor = vec4(test, vUv, 1.0);
   }
 `;

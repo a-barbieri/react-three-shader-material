@@ -1,18 +1,18 @@
-import React, { Component } from "react";
 import * as THREE from "three";
 import { Clock } from "./Clock";
 import { vertex } from "./shaders/background.vert.js";
 import { fragment } from "./shaders/background.frag.js";
 import apple from "../assets/images/apple.jpeg"
 
-export class Scene extends Component {
-  constructor(state) {
-    super(state);
+let testCount = 1;
+
+class _MainScene {
+  constructor() {
     this.animate = this.animate.bind(this);
     this.far = 1000;
   }
 
-  componentDidMount() {
+  init() {
     this.scene = new THREE.Scene();
     this.camera = new THREE.OrthographicCamera(
       -window.innerWidth / 2,
@@ -37,17 +37,17 @@ export class Scene extends Component {
     //this.renderer.setClearColor( 0x000000, 0 );
     this.renderer.domElement.id = "scene_test";
 
-    this.initialize();
+    this.setupScene();
 
     if (!document.getElementById("scene_test")) {
-      document.body.appendChild(this.renderer.domElement);
+      document.getElementById('main').appendChild(this.renderer.domElement);
     }
   }
 
   /**
    *
    */
-  initialize() {
+  setupScene() {
     // Create Clock
     this.clock = new Clock();
 
@@ -80,6 +80,15 @@ export class Scene extends Component {
     this.sphere.position.x = 40 * Math.sin(angle);
     this.sphere.position.y = 40 * Math.cos(angle);
 
+    if (testCount<1) {
+      testCount += 0.05;
+    } else {
+      testCount = 0;
+    }
+    // this.backgroundMaterial.uniforms.u_current_time = Math.sin(this.clock.elapsedTime()*0.01)*0.5 + 0.5;
+    this.backgroundMaterial.uniforms.u_current_time = testCount;
+    this.scene.getObjectByName('bg').material = this.backgroundMaterial;
+
     // Bind function to next frame
     requestAnimationFrame(this.animate);
     // Render ThreeJs Scene
@@ -102,31 +111,32 @@ export class Scene extends Component {
     const backgroundPlane = new THREE.PlaneBufferGeometry(
       window.innerWidth,
       window.innerHeight,
-      32
+      32,
     );
+    backgroundPlane.dynamic = true;
 
     let texture = this.createTexture();
 
     let uniforms = {
-      u_time:             { type: "f", value: 0 },
+      u_time:             { type: "f", value: 1.0 },
+      u_current_time:     { type: "f", value: 1.0 },
       u_resolution:       { type: "v2", value: new THREE.Vector2() },
-      u_mouse:            { type: "v2", value: new THREE.Vector2() },
       u_texture:          {type: "t", value: texture}
     };
 
     uniforms.u_resolution.value.x = window.innerWidth;
     uniforms.u_resolution.value.y = window.innerHeight;
 
-    let backgroundMaterial = new THREE.ShaderMaterial({
+    this.backgroundMaterial = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: vertex,
       fragmentShader: fragment,
       side: THREE.DoubleSide,
-      derivatives: true
+      // derivatives: true
     });
 
     // Create mesh
-    const mesh = new THREE.Mesh(backgroundPlane, backgroundMaterial);
+    const mesh = new THREE.Mesh(backgroundPlane, this.backgroundMaterial);
     mesh.name = "bg";
     this.scene.add(mesh);
 
@@ -148,8 +158,6 @@ export class Scene extends Component {
     );
     return texture;
   }
-
-  render() {
-    return <div />;
-  }
 }
+
+export const MainScene = new _MainScene();
