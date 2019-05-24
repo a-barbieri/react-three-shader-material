@@ -2,13 +2,13 @@ export const fragment = `
   precision   mediump   float;
   
   varying highp vec2 vUv;
+  
+  uniform sampler2D u_texture;
 
-  void main()
-  {
-    // Get viewport coordinates
-    vec2 coord = vUv;
-    
-    // Second Release
-    gl_FragColor = vec4( vec3(coord.x), 1.0 );
+  void main() {
+  
+    vec4 color = texture2D(u_texture, vUv);
+
+    gl_FragColor = vec4(color);
   }
 `;

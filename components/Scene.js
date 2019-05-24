@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { Clock } from "./Clock";
 import { vertex } from "./shaders/background.vert.js";
 import { fragment } from "./shaders/background.frag.js";
+import apple from "../assets/images/apple.jpeg"
 
 export class Scene extends Component {
   constructor(state) {
@@ -104,17 +105,24 @@ export class Scene extends Component {
       32
     );
 
+    let texture = this.createTexture();
+
+    let uniforms = {
+      u_time:             { type: "f", value: 0 },
+      u_resolution:       { type: "v2", value: new THREE.Vector2() },
+      u_mouse:            { type: "v2", value: new THREE.Vector2() },
+      u_texture:          {type: "t", value: texture}
+    };
+
+    uniforms.u_resolution.value.x = window.innerWidth;
+    uniforms.u_resolution.value.y = window.innerHeight;
+
     let backgroundMaterial = new THREE.ShaderMaterial({
-      // uniforms: {
-      //    u_resolution: {
-      //       type: 'vec2',
-      //       value: new THREE.Uniform(new THREE.Vector2(100, 200))
-      //    },
-      //    u_time: {type: 'float', value: 0.0 }
-      // },
+      uniforms: uniforms,
       vertexShader: vertex,
       fragmentShader: fragment,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
+      derivatives: true
     });
 
     // Create mesh
@@ -123,6 +131,22 @@ export class Scene extends Component {
     this.scene.add(mesh);
 
     window.mesh = mesh;
+  }
+
+  /**
+   *
+   * @returns {Texture}
+   */
+  createTexture() {
+    let textureLoader = new THREE.TextureLoader();
+    let texture = textureLoader.load(apple,
+      function( data ) { },
+      // Function called when download progresses
+      function ( xhr ) { console.log( (xhr.loaded / xhr.total * 100) + '% loaded' ); },
+      // Function called when download errors
+      function ( xhr ) { console.log( 'An error happened' ); }
+    );
+    return texture;
   }
 
   render() {

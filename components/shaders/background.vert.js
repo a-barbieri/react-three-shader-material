@@ -1,5 +1,8 @@
 export const vertex = `
 varying vec2 vUv;
+uniform vec2 u_mouse;
+uniform vec2 u_resolution;
+
 void main()
 {
    vUv = uv;
